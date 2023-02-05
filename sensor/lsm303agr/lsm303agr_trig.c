@@ -31,10 +31,13 @@ void lsm303agr_acc_interrupt(lsm303agr_trig *trigger,
     case BIT_ACC_INT_AOI2:
         src_reg = LSM303AGR_INT2_SRC_A;
         break;
+    case BIT_ACC_INT_DRDY1:
+        src_reg = LSM303AGR_INT1_SRC_A;
+        break;
     default:
         if (fifo_interrupt)
         {
-        src_reg = LSM303AGR_FIFO_SRC_REG_A;
+            src_reg = LSM303AGR_FIFO_SRC_REG_A;
             poll_bits = ((interrupt & BIT_ACC_INT_FIFO_WTM) ? BIT(7) : 0) | ((interrupt & BIT_ACC_INT_FIFO_OVR) ? BIT(6) : 0);
         }
         else
@@ -217,6 +220,8 @@ void lsm303agr_work_cb(struct k_work *work)
             lsm303agr_acc_interrupt(&data->acc_int1, BIT_ACC_INT_AOI1, data->dev);
         else if (data->acc_int1.enable & BIT_ACC_INT_AOI2)
             lsm303agr_acc_interrupt(&data->acc_int1, BIT_ACC_INT_AOI2, data->dev);
+        else if (data->acc_int1.enable & BIT_ACC_INT_DRDY1)
+            lsm303agr_acc_interrupt(&data->acc_int1, BIT_ACC_INT_DRDY1, data->dev);
         else if (data->acc_int1.enable & (BIT_ACC_INT_FIFO_WTM | BIT_ACC_INT_FIFO_OVR))
             lsm303agr_acc_interrupt(&data->acc_int1, data->acc_int1.enable & (BIT_ACC_INT_FIFO_WTM | BIT_ACC_INT_FIFO_OVR), data->dev);
     }
